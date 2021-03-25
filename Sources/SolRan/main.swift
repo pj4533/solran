@@ -31,8 +31,8 @@ struct SolRan: ParsableCommand {
             } else {
                 print("Error processing dungeon file")
             }
-        } catch {
-            print("Error processing dungeon file")
+        } catch let error {
+            print("Error processing dungeon file: \(error.localizedDescription)")
         }
     }
 }
