@@ -22,15 +22,18 @@ struct SolRan: ParsableCommand {
             // Modify the dungeon monsters here
             dungeon.title = "Modified title name"
             
-            // Serializing dungeon file out
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted
-            if let dungeonJSONData = try? encoder.encode(dungeon) {
-                let output = String(data: dungeonJSONData, encoding: .utf8)
-                print(output ?? "<error>")
-            } else {
-                print("Error processing dungeon file")
-            }
+            let datasource = EncounterDataSource()
+            datasource.getRandomEncounter()
+            
+//            // Serializing dungeon file out
+//            let encoder = JSONEncoder()
+//            encoder.outputFormatting = .prettyPrinted
+//            if let dungeonJSONData = try? encoder.encode(dungeon) {
+//                let output = String(data: dungeonJSONData, encoding: .utf8)
+//                print(output ?? "<error>")
+//            } else {
+//                print("Error processing dungeon file")
+//            }
         } catch let error {
             print("Error processing dungeon file: \(error.localizedDescription)")
         }
