@@ -1,0 +1,8 @@
+{
+    "dungeonMakerVersion": 1,
+    "title": "The little dungeon",
+    "description": "This is inside the main game",
+    "author": "Me obviously",
+    "startLevelMin": 1,
+    "startLevelMax": 4
+}
