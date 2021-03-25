@@ -1,9 +1,17 @@
 # solran
 
-Randomize monsters in a Solasta dungeon using 5e encounter rules
+Command line app to randomize monsters in a Solasta dungeon using 5e encounter rules
 
 ```
-overview here
+OVERVIEW: Command line app to randomize monsters in a Solasta dungeon using 5e encounter rules
+
+USAGE: solran <filename>
+
+ARGUMENTS:
+  <filename>              Solasta dungeon filename
+
+OPTIONS:
+  -h, --help              Show help information.
 ```
 
 ### Notes

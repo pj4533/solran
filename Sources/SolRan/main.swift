@@ -5,7 +5,7 @@ import SolastaKit
 struct SolRan: ParsableCommand {
     static let configuration = CommandConfiguration(
     	commandName: "solran",
-        abstract: "Randomize monsters in a Solasta dungeon using 5e encounter rules"
+        abstract: "Command line app to randomize monsters in a Solasta dungeon using 5e encounter rules"
     )
 
     @Argument(help: "Solasta dungeon filename")
