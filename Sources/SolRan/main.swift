@@ -17,20 +17,25 @@ struct SolRan: ParsableCommand {
             // Reading in dungeon file
             let data = try Data(contentsOf: url)
             let decoder = JSONDecoder()
-            let dungeon = try decoder.decode(Dungeon.self, from: data)
+            var dungeon = try decoder.decode(Dungeon.self, from: data)
 
-
-            for var room in dungeon.userRooms ?? [] {
-                print(room.roomBlueprintName ?? "nil blueprint")
-                
+            for index in 0..<(dungeon.userRooms?.count ?? 0) {
                 // if its a big room
-                if room.roomBlueprintName?.contains("24C") ?? false {
-                    let nonMonsterGadgets = room.userGadgets?.filter({!($0.gadgetBlueprintName?.contains("Monster") ?? false)})
+                if dungeon.userRooms?[index].roomBlueprintName?.contains("24C") ?? false {
+                    let nonMonsterGadgets = dungeon.userRooms?[index].userGadgets?.filter({!($0.gadgetBlueprintName?.contains("Monster") ?? false)})
+                    
+                    var gadgets: [Gadget] = []
                     
                     let datasource = EncounterDataSource()
-                    datasource.getRandomEncounter()
+                    let numberCreatures = Roll.d4()
+                    print("Number of creatures in room: \(numberCreatures)")
+                    for _ in 0..<numberCreatures {
+                        if let gadget = datasource.getRandomEncounter() {
+                            gadgets.append(gadget)
+                        }
+                    }
 
-                    room.userGadgets = nonMonsterGadgets
+                    dungeon.userRooms?[index].userGadgets = gadgets + (nonMonsterGadgets ?? [])
                 }
             }
             // read avg party lvl from command line eventually
@@ -39,15 +44,15 @@ struct SolRan: ParsableCommand {
             // figure out placement -- don't place any where someting is.
             //   -- need to know width/height of rooms? local x/y
             
-//            // Serializing dungeon file out
-//            let encoder = JSONEncoder()
-//            encoder.outputFormatting = .prettyPrinted
-//            if let dungeonJSONData = try? encoder.encode(dungeon) {
-//                let output = String(data: dungeonJSONData, encoding: .utf8)
-//                print(output ?? "<error>")
-//            } else {
-//                print("Error processing dungeon file")
-//            }
+            // Serializing dungeon file out
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            if let dungeonJSONData = try? encoder.encode(dungeon) {
+                let output = String(data: dungeonJSONData, encoding: .utf8)
+                print(output ?? "<error>")
+            } else {
+                print("Error processing dungeon file")
+            }
         } catch let error {
             print("Error processing dungeon file: \(error.localizedDescription)")
         }
