@@ -17,13 +17,27 @@ struct SolRan: ParsableCommand {
             // Reading in dungeon file
             let data = try Data(contentsOf: url)
             let decoder = JSONDecoder()
-            var dungeon = try decoder.decode(Dungeon.self, from: data)
+            let dungeon = try decoder.decode(Dungeon.self, from: data)
 
-            // Modify the dungeon monsters here
-            dungeon.title = "Modified title name"
-            
-            let datasource = EncounterDataSource()
-            datasource.getRandomEncounter()
+
+            for var room in dungeon.userRooms ?? [] {
+                print(room.roomBlueprintName ?? "nil blueprint")
+                
+                // if its a big room
+                if room.roomBlueprintName?.contains("24C") ?? false {
+                    let nonMonsterGadgets = room.userGadgets?.filter({!($0.gadgetBlueprintName?.contains("Monster") ?? false)})
+                    
+                    let datasource = EncounterDataSource()
+                    datasource.getRandomEncounter()
+
+                    room.userGadgets = nonMonsterGadgets
+                }
+            }
+            // read avg party lvl from command line eventually
+            // get random monsters for room
+            // --> to start place random monsters with no algorithm
+            // figure out placement -- don't place any where someting is.
+            //   -- need to know width/height of rooms? local x/y
             
 //            // Serializing dungeon file out
 //            let encoder = JSONEncoder()
