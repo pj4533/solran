@@ -19,23 +19,16 @@ struct SolRan: ParsableCommand {
             let decoder = JSONDecoder()
             var dungeon = try decoder.decode(Dungeon.self, from: data)
 
+            let datasource = EncounterDataSource()
             for index in 0..<(dungeon.userRooms?.count ?? 0) {
-                // if its a big room
-                if dungeon.userRooms?[index].roomBlueprintName?.contains("24C") ?? false {
-                    let nonMonsterGadgets = dungeon.userRooms?[index].userGadgets?.filter({!($0.gadgetBlueprintName?.contains("Monster") ?? false)})
-                    
-                    var gadgets: [Gadget] = []
-                    
-                    let datasource = EncounterDataSource()
-                    let numberCreatures = Roll.d4()
-                    print("Number of creatures in room: \(numberCreatures)")
-                    for _ in 0..<numberCreatures {
-                        if let gadget = datasource.getRandomEncounter() {
-                            gadgets.append(gadget)
+                for mindex in 0..<(dungeon.userRooms?[index].userGadgets?.count ?? 0) {
+                    if dungeon.userRooms?[index].userGadgets?[mindex].gadgetBlueprintName == "MonsterM" {
+                        for jindex in 0..<(dungeon.userRooms?[index].userGadgets?[mindex].parameterValues?.count ?? 0) {
+                            if dungeon.userRooms?[index].userGadgets?[mindex].parameterValues?[jindex].gadgetParameterDescriptionName == "Creature" {
+                                dungeon.userRooms?[index].userGadgets?[mindex].parameterValues?[jindex].stringValue = datasource.getRandomCreatureLabel()
+                            }
                         }
                     }
-
-                    dungeon.userRooms?[index].userGadgets = gadgets + (nonMonsterGadgets ?? [])
                 }
             }
             // read avg party lvl from command line eventually
