@@ -8,6 +8,13 @@ struct SolRan: ParsableCommand {
         abstract: "Command line app to randomize monsters in a Solasta dungeon using 5e encounter rules"
     )
 
+    enum DifficultyParam: String, CaseIterable, EnumerableFlag {
+        case easy, medium, hard, deadly
+    }
+    
+    @Flag(help: "Difficulty for encounters")
+    var difficulty: DifficultyParam
+    
     @Argument(help: "Solasta dungeon filename")
     var filename: String
 
@@ -25,7 +32,7 @@ struct SolRan: ParsableCommand {
             let datasource = EncounterDataSource()
             for index in 0..<(dungeon.userRooms?.count ?? 0) {
                 if let numberOfEnemies = dungeon.userRooms?[index].userGadgets?.filter({$0.gadgetBlueprintName == "MonsterM"}).count, numberOfEnemies > 0 {
-                    let creatureLabels = datasource.getEncounter(withNumberCreatures: numberOfEnemies, forAverageLvl: self.level, withDifficulty: .hard)
+                    let creatureLabels = datasource.getEncounter(withNumberCreatures: numberOfEnemies, forAverageLvl: self.level, withDifficulty: Difficulty(rawValue: self.difficulty.rawValue) ?? .hard)
                     
                     var i = 0
                     // I dont like this -- I usually use classes, but with structs its all values. Prob a better syntax for this, but I am going fast.
