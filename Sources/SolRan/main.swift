@@ -11,6 +11,9 @@ struct SolRan: ParsableCommand {
     @Argument(help: "Solasta dungeon filename")
     var filename: String
 
+    @Argument(help: "Average party level")
+    var level: Int
+
 	func run() {
         let url = URL(fileURLWithPath: filename)
         do {
@@ -21,21 +24,30 @@ struct SolRan: ParsableCommand {
 
             let datasource = EncounterDataSource()
             for index in 0..<(dungeon.userRooms?.count ?? 0) {
-                for mindex in 0..<(dungeon.userRooms?[index].userGadgets?.count ?? 0) {
-                    if dungeon.userRooms?[index].userGadgets?[mindex].gadgetBlueprintName == "MonsterM" {
-                        for jindex in 0..<(dungeon.userRooms?[index].userGadgets?[mindex].parameterValues?.count ?? 0) {
-                            if dungeon.userRooms?[index].userGadgets?[mindex].parameterValues?[jindex].gadgetParameterDescriptionName == "Creature" {
-                                dungeon.userRooms?[index].userGadgets?[mindex].parameterValues?[jindex].stringValue = datasource.getRandomCreatureLabel()
+                if let numberOfEnemies = dungeon.userRooms?[index].userGadgets?.filter({$0.gadgetBlueprintName == "MonsterM"}).count, numberOfEnemies > 0 {
+                    let creatureLabels = datasource.getEncounter(withNumberCreatures: numberOfEnemies, forAverageLvl: self.level, withDifficulty: .hard)
+                    
+                    var i = 0
+                    // I dont like this -- I usually use classes, but with structs its all values. Prob a better syntax for this, but I am going fast.
+                    for mindex in 0..<(dungeon.userRooms?[index].userGadgets?.count ?? 0) {
+                        if dungeon.userRooms?[index].userGadgets?[mindex].gadgetBlueprintName == "MonsterM" {
+                            for jindex in 0..<(dungeon.userRooms?[index].userGadgets?[mindex].parameterValues?.count ?? 0) {
+                                if dungeon.userRooms?[index].userGadgets?[mindex].parameterValues?[jindex].gadgetParameterDescriptionName == "Creature" {
+                                    if i < creatureLabels.count {
+                                        dungeon.userRooms?[index].userGadgets?[mindex].parameterValues?[jindex].stringValue = creatureLabels[i]
+                                        i = i + 1
+                                    } else {
+                                        dungeon.userRooms?[index].userGadgets?[mindex].parameterValues?[jindex].stringValue = ""
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-            // read avg party lvl from command line eventually
-            // get random monsters for room
-            // --> to start place random monsters with no algorithm
-            // figure out placement -- don't place any where someting is.
-            //   -- need to know width/height of rooms? local x/y
+            
+            dungeon.startLevelMin = self.level
+            dungeon.startLevelMax = self.level
             
             // Serializing dungeon file out
             let encoder = JSONEncoder()

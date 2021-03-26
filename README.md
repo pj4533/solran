@@ -5,10 +5,11 @@ Command line app to randomize monsters in a Solasta dungeon using 5e encounter r
 ```
 OVERVIEW: Command line app to randomize monsters in a Solasta dungeon using 5e encounter rules
 
-USAGE: solran <filename>
+USAGE: solran <filename> <level>
 
 ARGUMENTS:
   <filename>              Solasta dungeon filename
+  <level>                 Average party level
 
 OPTIONS:
   -h, --help              Show help information.
@@ -24,7 +25,7 @@ OPTIONS:
 1. Download the latest [release](https://github.com/pj4533/solran/releases)
 2. Open a terminal window and find the folder you downloaded to
 3. Command to make app executable:  `chmod +x solran`
-4. Command to run:  `./solran <solasta dungeon json> > output_dungeon_file.json`
+4. Command to run:  `./solran <solasta dungeon json> <level> output_dungeon_file.json`
 
 You might also need to give MacOS permission to run the app.
 
@@ -37,6 +38,3 @@ You might also need to give MacOS permission to run the app.
 `./.build/debug/solran` Runs app after building
 
 `swift run solran` Runs app directly
-
-`swift package generate-xcodeproj` Generates an xcode project file
-
